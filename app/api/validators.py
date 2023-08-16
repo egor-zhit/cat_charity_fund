@@ -11,7 +11,7 @@ async def check_name_duplicate(
     project_id = await project_crud.get_project_id_by_name(project_name, session)
     if project_id is not None:
         raise HTTPException(
-            status_code=422,
+            status_code=400,
             detail='Проект с таким именем уже существует!',
         )
 
@@ -39,7 +39,7 @@ async def chec_invested_amount(
     invested_amount = await project_crud.get_amount(project_id, session)
     if invested_amount is not None and full_amount < invested_amount:
         raise HTTPException(
-            status_code=422,
+            status_code=400,
             detail='Сумма не может быть меньше уже внесенной!'
         )
 

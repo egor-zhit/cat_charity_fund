@@ -20,6 +20,7 @@ router = APIRouter()
         'user_id', 'invested_amount ', 'fully_invested',
         'close_date '
     },
+    response_model_exclude_none=True
 )
 async def create_new_donation(
     donation: DonationCreate,
@@ -52,6 +53,7 @@ async def get_read_all_donation(
         'user_id', 'invested_amount ', 'fully_invested',
         'close_date '
     },
+    response_model_exclude_none=True
 )
 async def get_my_donation(
     session: AsyncSession = Depends(get_async_session),

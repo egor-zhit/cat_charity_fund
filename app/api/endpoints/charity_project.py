@@ -44,7 +44,6 @@ async def get_all_project(
 @router.patch(
     '/{project_id}',
     response_model=ProjectDB,
-    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
 async def partially_update_project(
