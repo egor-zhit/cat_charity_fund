@@ -49,6 +49,12 @@ async def for_path_project(
         obj_in: CharityProject,
         session: AsyncSession,
 ):
+    proj = await check_project_exists(project_id, session)
+    if proj.fully_invested is True:
+        raise HTTPException(
+            status_code=400,
+            detail='Закрытый проект нельзя редактировать!',
+        )
     if obj_in.name is not None:
         await check_name_duplicate(obj_in.name, session)
     if obj_in.full_amount is not None:
@@ -63,6 +69,6 @@ async def for_remove_project(
     project = await project_crud.get_amount(project_id, session)
     if project != 0:
         raise HTTPException(
-            status_code=422,
-            detail='Нельзя удалить проект в который уже внесены пожертвования!',
+            status_code=400,
+            detail='В проект были внесены средства, не подлежит удалению!',
         )

@@ -1,8 +1,8 @@
 from app.core.db import AsyncSessionLocal
 from sqlalchemy import select
 from app.crud.base import CRUDBase
-from app.models import Donations, User
-from app.models.donation import Donations
+from app.models import Donation, User
+from app.models.donation import Donation
 
 
 class CRUDDonation(CRUDBase):
@@ -10,11 +10,11 @@ class CRUDDonation(CRUDBase):
             self, session: AsyncSessionLocal, user: User
     ):
         reservations = await session.execute(
-            select(Donations).where(
-                Donations.user_id == user.id
+            select(Donation).where(
+                Donation.user_id == user.id
             )
         )
         return reservations.scalars().all()
 
 
-donation_crud = CRUDDonation(Donations)
+donation_crud = CRUDDonation(Donation)

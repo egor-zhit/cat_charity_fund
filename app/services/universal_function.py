@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.models.donation import Donations
+from app.models.donation import Donation
 from typing import Union
 from app.models.charity_project import CharityProject
 from app.crud.charity_project import project_crud
@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def obj_close(
-    obj: Union[CharityProject, Donations]
-) -> Union[CharityProject, Donations]:
+    obj: Union[CharityProject, Donation]
+) -> Union[CharityProject, Donation]:
     obj.invested_amount = obj.full_amount
     obj.fully_invested = True
     obj.close_date = datetime.now()
@@ -20,7 +20,7 @@ async def main_process_invest(
     session: AsyncSession,
     project=None,
     donation=None
-) -> Union[CharityProject, Donations]:
+) -> Union[CharityProject, Donation]:
     if donation:
         crud_func = project_crud
         new_obj = donation
@@ -34,16 +34,19 @@ async def main_process_invest(
         need_amount = get_obj.full_amount - get_obj.invested_amount
         if need_amount > free_money:
             get_obj.invested_amount = get_obj.invested_amount + free_money
+            free_money = 0
             new_obj = await obj_close(new_obj)
             session.add(new_obj)
             break
         if need_amount < free_money:
+            free_money = 0
             new_obj.invested_amount += need_amount
             get_obj = await obj_close(get_obj)
             session.add(get_obj)
         if need_amount == free_money:
             get_obj.invested_amount = get_obj.invested_amount + free_money
             new_obj.invested_amount = new_obj.invested_amount + need_amount
+            free_money = 0
             get_obj = await obj_close(get_obj)
             new_obj = await obj_close(new_obj)
             session.add(new_obj)

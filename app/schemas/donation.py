@@ -20,6 +20,7 @@ class DonationCreate(DonationBase):
 class DonationDB(DonationCreate):
     id: int
     user_id: Optional[int]
+    comment: Optional[str]
     invested_amount: int
     fully_invested: bool
     create_date: datetime
