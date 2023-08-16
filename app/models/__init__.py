@@ -1,4 +1,4 @@
-from .base import AbstractModelProject
-from .charity_project import CharityProject
-from .donation import Donations
-from .user import User
+from .base import AbstractModelProject # noqa
+from .charity_project import CharityProject # noqa
+from .donation import Donations # noqa
+from .user import User # noqa
