@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 async def obj_close(
     obj: Union[CharityProject, Donation]
 ) -> Union[CharityProject, Donation]:
+    '''Функция закрытия модели!'''
     obj.invested_amount = obj.full_amount
     obj.fully_invested = True
     obj.close_date = datetime.now()
@@ -21,15 +22,20 @@ async def main_process_invest(
     project=None,
     donation=None
 ) -> Union[CharityProject, Donation]:
+    '''Функция инвестирования'''
+    #Проверка аргументов, для каждого аргумента свои круд-функции
     if donation:
         crud_func = project_crud
         new_obj = donation
     if project:
         crud_func = donation_crud
         new_obj = project
+    #Изходя из аргументов, круд-функция ищет не закрытые обьекты моделей
     get_id_objs_not_closed = await crud_func.get_obj_not_closed(session)
     free_money = new_obj.full_amount - new_obj.invested_amount
+    #С помощью цикла перебираем полученые обьекты id
     for id in get_id_objs_not_closed:
+        #Получаем по id обьект модели
         get_obj = await crud_func.get(id, session)
         need_amount = get_obj.full_amount - get_obj.invested_amount
         if need_amount > free_money:
@@ -51,6 +57,7 @@ async def main_process_invest(
             new_obj = await obj_close(new_obj)
             session.add(new_obj)
             session.add(get_obj)
+    #добавляем все наши операции, комитим и перезагружаем базу-данных
     session.add(new_obj)
     await session.commit()
     await session.refresh(new_obj)

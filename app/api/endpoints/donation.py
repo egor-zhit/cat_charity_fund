@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +8,6 @@ from app.core.user import current_user, current_superuser
 from app.crud.donation import donation_crud
 from app.models.user import User
 from app.schemas.donation import DonationCreate, DonationDB
-from typing import List
 from app.services.universal_function import main_process_invest
 
 

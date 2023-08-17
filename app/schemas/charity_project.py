@@ -4,6 +4,9 @@ from pydantic import Field, PositiveInt, validator
 from .base import General_Scheme
 
 
+ERROR_MESSAGE = 'Данную строку нельзя редактировать'
+
+
 class ProjectBase(General_Scheme):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = Field(None, min_length=1)
@@ -38,19 +41,19 @@ class ProjectUpdate(ProjectBase):
     @validator('invested_amount')
     def invested_amount(cls, value: bool):
         if value:
-            raise ValueError('Данную строку нельзя редактировать')
+            raise ValueError(ERROR_MESSAGE)
         return value
 
     @validator('create_date')
     def create_date(cls, value: bool):
         if value:
-            raise ValueError('Данную строку нельзя редактировать')
+            raise ValueError(ERROR_MESSAGE)
         return value
 
     @validator('close_date')
     def close_date(cls, value: bool):
         if value:
-            raise ValueError('Данную строку нельзя редактировать')
+            raise ValueError(ERROR_MESSAGE)
         return value
 
 

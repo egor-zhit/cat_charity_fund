@@ -1,7 +1,12 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.validators import check_name_duplicate, check_project_exists, for_path_project, for_remove_project
-from typing import List
+from app.api.validators import (
+    check_name_duplicate, check_project_exists,
+    check_the_project_before_updating, check_the_project_before_deleting
+)
+
 from app.core.user import current_superuser
 from app.core.db import get_async_session
 from app.crud.charity_project import project_crud
@@ -53,7 +58,7 @@ async def partially_update_project(
 ):
     """Только для суперюзеров."""
     project = await check_project_exists(project_id, session)
-    obj = await for_path_project(project_id, obj_in, session)
+    obj = await check_the_project_before_updating(project_id, obj_in, session)
     project = await project_crud.update(
         project, obj, session
     )
@@ -71,6 +76,6 @@ async def delete_project(
 ):
     """Только для суперюзеров."""
     project_get = await check_project_exists(project_id, session)
-    project = await for_remove_project(project_id, session)
+    project = await check_the_project_before_deleting(project_id, session)
     project = await project_crud.remove(project_get, session)
     return project

@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.charity_project import project_crud
@@ -11,7 +12,7 @@ async def check_name_duplicate(
     project_id = await project_crud.get_project_id_by_name(project_name, session)
     if project_id is not None:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Проект с таким именем уже существует!',
         )
 
@@ -25,7 +26,7 @@ async def check_project_exists(
     )
     if project is None:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail='Проект не найдена!'
         )
     return project
@@ -39,12 +40,12 @@ async def chec_invested_amount(
     invested_amount = await project_crud.get_amount(project_id, session)
     if invested_amount is not None and full_amount < invested_amount:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Сумма не может быть меньше уже внесенной!'
         )
 
 
-async def for_path_project(
+async def check_the_project_before_updating(
         project_id: int,
         obj_in: CharityProject,
         session: AsyncSession,
@@ -52,7 +53,7 @@ async def for_path_project(
     proj = await check_project_exists(project_id, session)
     if proj.fully_invested is True:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Закрытый проект нельзя редактировать!',
         )
     if obj_in.name is not None:
@@ -62,13 +63,13 @@ async def for_path_project(
     return obj_in
 
 
-async def for_remove_project(
+async def check_the_project_before_deleting(
         project_id: int,
         session: AsyncSession
 ):
     project = await project_crud.get_amount(project_id, session)
     if project != 0:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!',
         )
