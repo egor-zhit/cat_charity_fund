@@ -32,7 +32,7 @@ async def check_project_exists(
     return project
 
 
-async def chec_invested_amount(
+async def check_invested_amount(
         project_id: int,
         full_amount: int,
         session: AsyncSession,
@@ -59,7 +59,7 @@ async def check_the_project_before_updating(
     if obj_in.name is not None:
         await check_name_duplicate(obj_in.name, session)
     if obj_in.full_amount is not None:
-        await chec_invested_amount(project_id, obj_in.full_amount, session)
+        await check_invested_amount(project_id, obj_in.full_amount, session)
     return obj_in
 
 
